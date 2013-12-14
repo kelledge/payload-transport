@@ -37,5 +37,19 @@ def XBeeAPIUnFramer(target=None):
       )
 
 
+def XBeeAPIFramer(bytes, escaped=False):
+  frame_length = len(bytes)
+  frame_bytesum = 0  
+
+  yield '\x7e'
+  yield struct.pack('>H', frame_length)
+  yield bytes
+  for b in bytes:
+    frame_bytesum += struct.unpack('>B', b)[0]
+
+  frame_checksum = 0xff - (frame_bytesum & 0xff)
+  yield struct.pack('>B', frame_checksum)
+
+
 class FrameManager(object):
   pass

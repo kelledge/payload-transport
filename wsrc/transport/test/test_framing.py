@@ -121,10 +121,10 @@ class TestXBeeAPIFramer(unittest.TestCase):
     self.assertEqual(expected_checksum, actual_checksum)
 
   def test_correctLength(self):
-    expected_length = '\x16'    
+    expected_length = '\x00\x16'    
 
     framer_generator = framing.XBeeAPIFramer(self.api_tx_request)
-    framer_list = list(framer_generator)
+    framer_list = ''.join(list(framer_generator))
     actual_length = framer_list[1:3]
 
     self.assertEqual(expected_length, actual_length)

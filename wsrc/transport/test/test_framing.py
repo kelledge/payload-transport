@@ -129,6 +129,9 @@ class TestXBeeAPIFramer(unittest.TestCase):
 
     self.assertEqual(expected_length, actual_length)
 
+  def test_correctLongLength(self):
+    pass
+
   def test_correctStartDelimiter(self):
     expected_start_delimiter = '\x7e'    
 
@@ -139,5 +142,74 @@ class TestXBeeAPIFramer(unittest.TestCase):
     self.assertEqual(expected_start_delimiter, actual_start_delimiter)
 
 
+class TestXBeeAPIFrameEscaper(unittest.TestCase):
+
+  def setUp(self):
+    self.bytes_needing_escape = (
+      '\x7e\x10\x7e\x00\x7d\xa2\x00\x40' +
+      '\x0a\x11\x27\xff\xfe\x00\x00' +
+      '\x54\x13\x44\x61\x74\x61\x30\x41'
+    )
+
+  def test_defaultEscapedSettings(self):
+    expected_escaped_bytes = (
+      '\x7e\x10\x7d\x5e\x00\x7d\x5d\xa2\x00\x40' +
+      '\x0a\x7d\x31\x27\xff\xfe\x00\x00' +
+      '\x54\x7d\x33\x44\x61\x74\x61\x30\x41'
+    )
+
+    escaped_bytes = framing.XBeeAPIFrameEscaper(self.bytes_needing_escape)
+    actual_escaped_bytes = ''.join(list(escaped_bytes))
+
+    self.assertEqual(expected_escaped_bytes, actual_escaped_bytes)
+
+  def test_overridenEscapeMarker(self):
+    expected_escaped_bytes = (
+      '\x7e\x10\x7d\x5e\x00\x7d\x5d\xa2\x00\x40' +
+      '\x0a\x7d\x31\x27\xff\xfe\x00\x00' +
+      '\x54\x7d\x33\x44\x61\x74\x61\x30\x41'
+    )
+
+    escaped_bytes = framing.XBeeAPIFrameEscaper(self.bytes_needing_escape, escape_marker='\x11')
+    actual_escaped_bytes = ''.join(list(escaped_bytes))
+
+    self.assertEqual(expected_escaped_bytes, actual_escaped_bytes)
+
+  def test_overridenEscapedBytes(self):
+    expected_escaped_bytes = (
+      '\x7e\x10\x7e\x00\x7d\xa2\x00\x40' +
+      '\x0a\x11\x27\x7d\xdf\x7d\xde\x00\x00' +
+      '\x54\x13\x44\x61\x74\x61\x30\x41'
+    )
+
+    escaped_bytes = framing.XBeeAPIFrameEscaper(self.bytes_needing_escape)
+    actual_escaped_bytes = ''.join(list(escaped_bytes))
+
+    self.assertEqual(expected_escaped_bytes, actual_escaped_bytes)
+
+  def test_firstByteUnescaped(self):
+    self.assertTrue(False)
+
+
+class TestFrameFlattener(unittest.TestCase):
+
+  def test_singleElementFrame(self):
+    self.assertTrue(False)
+
+  def test_multiElementFrame(self):
+    self.assertTrue(False)
+
+  def test_mixedSizedElementFrame(self):
+    self.assertTrue(False)
+
+
 class TestFrameManager(unittest.TestCase):
-  pass
+
+  def setUp(self):
+    pass
+
+  def tearDown(self):
+    pass
+
+  
+

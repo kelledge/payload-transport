@@ -51,10 +51,12 @@ def XBeeAPIUnFramer(target=None):
 
       for _ in xrange(frame_length):
         byte = (yield)
-        frame_bytesum, += struct.unpack('>B', byte)
+        frame_bytesum += struct.unpack('>B', byte)[0]
         frame_contents += byte
 	
       frame_checksum, = struct.unpack('>B', (yield))
+
+      valid = True if ((0xff - (frame_bytesum & 0xff)) == frame_checksum) else False
       target.send(
         length=frame_length,
         contents=frame_contents,
